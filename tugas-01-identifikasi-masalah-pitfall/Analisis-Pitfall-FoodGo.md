@@ -87,7 +87,7 @@ Menjalankan beberapa instance membutuhkan resource dan biaya tambahan. Pemisahan
 
 ---
 
-## Kesimpulan Kelompok
+## Kesimpulan Kelompok — ditulis oleh Muhammad Rajwa Al Fathan Koessaputra
 
 Berdasarkan studi kasus FoodGo, terdapat tiga masalah utama, yaitu asumsi bahwa jaringan selalu dapat diandalkan, anggapan bahwa komunikasi antarservice tidak memiliki keterlambatan, serta ketergantungan pada satu proses monolitik sebagai titik kegagalan tunggal.
 
