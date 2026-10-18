@@ -15,26 +15,23 @@
 
 **Bukti di skenario:**
 
-"Network is always reliable, no need for retry" dan tidak adanya mekanisme timeout pada komunikasi antarservice.
+Tim engineering FoodGo menemukan kode yang memiliki asumsi `# network is always reliable, no need for retry`. Selain itu, tidak terdapat mekanisme timeout pada pemanggilan antarservice.
 
 **Kenapa ini keliru:**
 
-[Jelaskan mengapa komunikasi jaringan dapat mengalami gangguan, kehilangan respons, atau kegagalan sementara.]
+Asumsi bahwa jaringan selalu dapat diandalkan tidak sesuai dengan kondisi sistem terdistribusi yang sebenarnya. Komunikasi antarservice dapat mengalami gangguan, kehilangan respons, atau keterlambatan. Permintaan yang dikirim belum tentu mendapatkan respons meskipun service tujuan masih berjalan. Oleh karena itu, sistem perlu memiliki mekanisme untuk menangani kegagalan komunikasi.
 
 **Dampak ke FoodGo:**
 
-[Uraikan bagaimana kegagalan komunikasi memengaruhi pemrosesan pesanan dan pembayaran.]
+Ketika modul pesanan mengirim permintaan ke modul pembayaran dan komunikasi mengalami gangguan, proses pesanan dapat terhambat. Tanpa mekanisme timeout, pemanggilan dapat terus menunggu dan menggunakan resource server. Jika banyak permintaan mengalami kondisi yang sama saat promo berlangsung, permintaan dapat menumpuk dan memperburuk kinerja aplikasi.
 
 **Solusi desain awal:**
 
-- Menerapkan timeout pada komunikasi antarservice.
-- Menggunakan retry terbatas dengan exponential backoff.
-- Menerapkan circuit breaker untuk mencegah permintaan terus-menerus ke service yang bermasalah.
-- Mempertimbangkan idempotency untuk mencegah transaksi ganda akibat retry.
+FoodGo dapat menerapkan timeout pada komunikasi antarservice dan retry terbatas dengan exponential backoff. Circuit breaker juga dapat digunakan untuk menghentikan sementara permintaan ke service yang terus mengalami kegagalan. Untuk transaksi pembayaran, sistem perlu menggunakan mekanisme idempotency agar pengulangan permintaan tidak menyebabkan pembayaran diproses lebih dari sekali.
 
 **Trade-off:**
 
-[Jelaskan bagaimana retry dapat menambah beban sistem dan mengapa jumlah percobaan perlu dibatasi.]
+Retry dapat membantu mengatasi gangguan sementara, tetapi jika dilakukan terlalu sering, jumlah permintaan justru meningkat ketika server sedang bermasalah. Hal ini dapat memperparah kegagalan berantai atau cascading failure. Karena itu, jumlah retry perlu dibatasi dan jeda antarpercobaan perlu ditingkatkan secara bertahap.
 
 ---
 
@@ -42,26 +39,23 @@
 
 **Bukti di skenario:**
 
-Modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu. Saat trafik meningkat, aplikasi menjadi lambat dan beberapa permintaan mengalami timeout.
+Skenario menyebutkan bahwa modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu. Ketika jumlah pesanan meningkat, aplikasi menjadi sangat lambat dan beberapa permintaan mengalami timeout.
 
 **Kenapa ini keliru:**
 
-[Jelaskan mengapa komunikasi antarservice membutuhkan waktu dan bagaimana keterlambatan dapat terjadi.]
+Dalam sistem terdistribusi, komunikasi antarservice membutuhkan waktu. Permintaan harus dikirim melalui jaringan, diproses oleh service tujuan, lalu hasilnya dikirim kembali. Waktu respons dapat meningkat ketika server sibuk atau jaringan mengalami gangguan. Jika sistem menganggap komunikasi berlangsung seketika, desainnya tidak mampu menangani keterlambatan yang terjadi dalam kondisi nyata.
 
 **Dampak ke FoodGo:**
 
-[Analisis bagaimana thread yang tertahan dapat menyebabkan penumpukan permintaan, penggunaan resource meningkat, dan respons aplikasi melambat.]
+Ketika modul pembayaran merespons dengan lambat, proses pada modul pesanan ikut tertahan. Thread atau koneksi yang digunakan untuk menangani permintaan tersebut tetap terpakai selama menunggu. Saat banyak pelanggan melakukan pemesanan secara bersamaan, semakin banyak resource yang tertahan sehingga permintaan baru sulit diproses. Akibatnya, waktu respons meningkat, permintaan mengalami timeout, dan server berisiko kehabisan resource.
 
 **Solusi desain awal:**
 
-- Menetapkan batas waktu tunggu untuk setiap pemanggilan service.
-- Menyesuaikan timeout dengan kebutuhan masing-masing operasi.
-- Membatasi jumlah permintaan yang diproses secara bersamaan.
-- Memantau waktu respons dan jumlah permintaan yang gagal.
+FoodGo perlu menetapkan timeout pada setiap pemanggilan antarservice agar proses tidak menunggu tanpa batas. Batas waktu tersebut harus disesuaikan dengan kebutuhan setiap operasi. Selain itu, FoodGo dapat membatasi jumlah permintaan yang diproses secara bersamaan dan memantau waktu respons setiap service. Jika suatu operasi dapat dilakukan secara asinkron, proses tersebut juga dapat dipisahkan agar tidak perlu menunggu seluruh pekerjaan selesai dalam satu permintaan.
 
 **Trade-off:**
 
-[Jelaskan risiko timeout yang terlalu singkat dapat menghentikan operasi yang sebenarnya masih bisa berhasil.]
+Timeout yang terlalu singkat dapat membuat permintaan dihentikan meskipun service tujuan sebenarnya masih dapat menyelesaikannya. Sebaliknya, timeout yang terlalu lama membuat resource tetap terpakai ketika service mengalami masalah. Oleh sebab itu, batas waktu perlu ditentukan berdasarkan hasil pengukuran waktu respons dan kebutuhan proses bisnis.
 
 ---
 
@@ -69,39 +63,38 @@ Modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu. Saat tr
 
 **Bukti di skenario:**
 
-Satu server menangani modul pesanan, pembayaran, dan notifikasi kurir dalam satu proses monolitik. Ketika trafik meningkat, server kewalahan dan terkadang mengalami crash total.
+Skenario menjelaskan bahwa satu server menangani seluruh modul, yaitu pesanan, pembayaran, dan notifikasi kurir. Semua modul berjalan dalam satu proses monolitik yang kewalahan ketika trafik meningkat. Server juga terkadang mengalami crash total dan harus di-restart secara manual.
 
 **Kenapa ini keliru:**
 
-[Jelaskan risiko ketergantungan seluruh modul pada satu proses atau server, serta perbedaan skalabilitas dan ketersediaan sistem.]
+Ketergantungan seluruh fungsi aplikasi pada satu proses dan satu server dapat menjadi titik kegagalan tunggal atau single point of failure. Ketika proses tersebut mengalami crash, seluruh modul yang berada di dalamnya dapat ikut berhenti. Arsitektur yang menjalankan semua modul dalam satu proses juga membatasi kemampuan untuk meningkatkan kapasitas hanya pada komponen yang sedang membutuhkan resource lebih besar.
+
+Namun, arsitektur monolitik tidak selalu buruk. Masalah utama FoodGo adalah ketergantungan pada satu proses atau instance tanpa isolasi kegagalan dan kapasitas yang memadai.
 
 **Dampak ke FoodGo:**
 
-[Uraikan bagaimana beban tinggi pada satu modul dapat memengaruhi modul lain dan bagaimana crash dapat menghentikan seluruh fungsi aplikasi.]
+Ketika trafik pemesanan meningkat, penggunaan CPU dan memori pada server dapat bertambah karena seluruh modul menggunakan resource yang sama. Beban pada proses pesanan dapat memengaruhi pembayaran dan notifikasi kurir. Jika proses mengalami crash, ketiga fungsi tersebut dapat berhenti sekaligus. Pemulihan yang masih mengandalkan restart manual juga memperpanjang waktu gangguan dan menghambat pelayanan pelanggan.
 
 **Solusi desain awal:**
 
-- Memisahkan modul secara bertahap berdasarkan kebutuhan dan beban.
-- Mengisolasi komponen yang paling berat agar gangguannya tidak langsung memengaruhi seluruh aplikasi.
-- Mempertimbangkan beberapa instance aplikasi dan load balancing.
-- Menambahkan mekanisme pemantauan dan pemulihan otomatis.
+FoodGo dapat memulai dengan memperbaiki pengelolaan resource, menambahkan pemantauan, dan menerapkan restart otomatis ketika proses mengalami kegagalan. Untuk meningkatkan ketersediaan, aplikasi dapat dijalankan pada beberapa instance dengan load balancer jika infrastruktur memungkinkan. Dalam jangka panjang, modul yang memiliki kebutuhan kapasitas atau tingkat kegagalan berbeda, seperti pembayaran dan notifikasi, dapat dipisahkan secara bertahap menjadi service tersendiri.
+
+Pemisahan modul sebaiknya dilakukan berdasarkan kebutuhan, bukan sekadar mengubah semua modul menjadi microservice. Database, komunikasi antarservice, dan mekanisme pemulihan juga harus dirancang dengan baik.
 
 **Trade-off:**
 
-[Jelaskan bertambahnya kompleksitas komunikasi jaringan, deployment, pemantauan, dan konsistensi data setelah modul dipisahkan.]
+Menjalankan beberapa instance membutuhkan resource dan biaya tambahan. Pemisahan modul menjadi service juga meningkatkan kompleksitas deployment, pemantauan, komunikasi jaringan, dan pengelolaan konsistensi data. Karena itu, FoodGo perlu memprioritaskan komponen yang paling bermasalah terlebih dahulu sebelum memperluas arsitektur.
 
 ---
 
-## Kesimpulan Kelompok — Muhammad Rajwa Al Fathan Koessaputra
+## Kesimpulan Kelompok
 
-**Ringkasan masalah:**
+Berdasarkan studi kasus FoodGo, terdapat tiga masalah utama, yaitu asumsi bahwa jaringan selalu dapat diandalkan, anggapan bahwa komunikasi antarservice tidak memiliki keterlambatan, serta ketergantungan pada satu proses monolitik sebagai titik kegagalan tunggal.
 
-[Gabungkan hasil analisis ketiga pitfall dan jelaskan hubungan antara asumsi jaringan, keterlambatan komunikasi, dan keterbatasan arsitektur.]
+Ketiga masalah tersebut saling berkaitan. Gangguan komunikasi dapat membuat permintaan tertahan, sedangkan keterlambatan yang tidak ditangani dapat menghabiskan resource server. Ketika seluruh modul bergantung pada satu proses, beban yang meningkat atau crash dapat mengganggu semua fungsi aplikasi sekaligus.
 
-**Rekomendasi arsitektur:**
+Sebagai langkah awal, FoodGo perlu menerapkan timeout, retry terbatas dengan exponential backoff, circuit breaker, serta pemantauan waktu respons dan penggunaan resource. Untuk meningkatkan skalabilitas dan ketersediaan, FoodGo dapat mempertimbangkan beberapa instance aplikasi dan pemisahan modul secara bertahap sesuai kebutuhan.
 
-[Diskusikan apakah FoodGo sebaiknya memperbaiki monolitik terlebih dahulu atau mulai memisahkan modul tertentu. Sertakan alasan berdasarkan hasil diskusi.]
+Solusi tersebut memiliki trade-off berupa tambahan kompleksitas, kebutuhan resource, dan risiko retry berlebihan. Oleh karena itu, penerapan perlu dilakukan secara bertahap dan dievaluasi berdasarkan hasil pengujian.
 
-**Hubungan dengan Tugas 2:**
-
-[Jelaskan bagaimana hasil identifikasi masalah ini menjadi dasar untuk menentukan arsitektur, komponen, dan mekanisme komunikasi yang akan dirancang pada tugas berikutnya.]
+Hasil analisis ini dapat menjadi dasar Tugas 2 untuk merancang arsitektur sistem terdistribusi FoodGo yang lebih tangguh, terukur, dan mampu menangani peningkatan jumlah pesanan tanpa menyebabkan seluruh sistem berhenti.
