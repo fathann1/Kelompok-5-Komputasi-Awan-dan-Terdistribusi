@@ -10,12 +10,18 @@
 - Perbedaan pendapat: [isi jika ada, mis. apakah masalah "tidak ada timeout" masuk Pitfall 1 atau Pitfall 2]
 
 ## [Tanggal diskusi 2] — Penyusunan dan review draf
-- Peserta: [Gde Andika Ananta Putra]
-- Poin diskusi:
-  - Draf ketiga pitfall dan kesimpulan digabungkan ke `Analisis-Pitfall-FoodGo.md`.
-  - Pitfall 3 diberi catatan bahwa arsitektur monolitik tidak selalu buruk; masalah utamanya adalah ketergantungan pada satu proses tanpa isolasi kegagalan.
-  - Solusi pemisahan modul diarahkan bertahap sesuai kebutuhan, bukan langsung mengubah semua modul menjadi microservice.
-  - [tambahkan poin lain yang benar-benar dibahas]
+
+* Peserta: Gde Andika Ananta Putra [+ anggota lain jika ikut]
+* Poin diskusi:
+   * Draf ketiga pitfall dan kesimpulan digabungkan ke `Analisis-Pitfall-FoodGo.md`.
+   * Pitfall 3 diberi catatan bahwa arsitektur monolitik tidak selalu buruk;
+     masalah utamanya adalah ketergantungan pada satu proses tanpa isolasi kegagalan.
+   * Solusi pemisahan modul diarahkan bertahap sesuai kebutuhan, bukan langsung
+     mengubah semua modul menjadi microservice.
+   * Menguji klaim Pitfall 3 rolling deploy menghilangkan downtime saat
+     deploy, tetapi tidak mengatasi bug/memory leak satu modul yang tetap
+     menjatuhkan semua instance jadwal rilis yang tetap harus
+     bersamaan antar-tim, dan scaling yang tidak bisa per modul.
 
 ## 2026-10-31 — Revisi Pitfall 1
 - Dikerjakan oleh: Gusti
@@ -28,9 +34,9 @@
 - Catatan: [apakah kesimpulan Fathan ikut disesuaikan?]
 
 ## Review Silang
-- Fathan mengomentari analisis Gusti: [...]
-- Fathan mengomentari analisis Andika: [...]
-- Fathan mengomentari analisis Dyandra: [...]
+-  mengomentari analisis Gusti: [...]
+-  mengomentari analisis Andika: [...]
+-  mengomentari analisis Dyandra: [...]
 - [Anggota lain] mengomentari kesimpulan Fathan: [...]
 
 ## Log Penggunaan AI (Level 2)
