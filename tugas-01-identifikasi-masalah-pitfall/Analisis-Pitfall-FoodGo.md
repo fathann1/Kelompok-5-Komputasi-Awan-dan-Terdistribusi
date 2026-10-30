@@ -9,29 +9,7 @@
 | Dyandra Alifyan Nugroho | 103072400014 | Pitfall 3: Single Point of Failure |
 | Muhammad Rajwa Al Fathan Koessaputra | 103072400113 | Kesimpulan kelompok dan review silang |
 
----
 
-## Pitfall 1: The Network Is Reliable — ditulis oleh Gusti Rifan
-
-**Bukti di skenario:**
-
-Tim engineering FoodGo menemukan kode yang memiliki asumsi `# network is always reliable, no need for retry`. Selain itu, tidak terdapat mekanisme timeout pada pemanggilan antarservice.
-
-**Kenapa ini keliru:**
-
-Menganggap bahwa jaringan selalu dapat diandalkan adalah kesalahan, ini tidak sesuai dengan kondisi sistem terdistribusi yang sebenarnya. Komunikasi antarservice dapat mengalami gangguan, kehilangan respons, atau keterlambatan karenan kegagalan jaringan bisa saja terjadi seperti paket data hilang, koneksi terputus, dll. Permintaan yang dikirim belum tentu mendapatkan respons meskipun service tujuan masih berjalan. Oleh karena itu, sistem perlu memiliki mekanisme untuk menangani kegagalan komunikasi.
-
-**Dampak ke FoodGo:**
-
-Ketika modul pesanan mengirim permintaan ke modul pembayaran, ada kemungkinan pembayaran bisa berhasil diproses, namun responsnya hilang di jaringan. Karena tidak ada mekanisme pengecekan ulang, modul pesanan tidak mengetahui hasil pembayaran tersebut. Akibatnya, pesanan tidak diteruskan ke restoran, padahal saldo pelanggan sudah terpotong. Pelanggan yang mengira pembayarannya gagal lalu menekan tombol bayar lagi maka berisiko tertagih dua kali. Saat promo, kejadian seperti ini dapat terjadi pada ratusan pesanan sekaligus dan menimbulkan banyak komplain, permintaan refund, dan menurunkan kepercayaan pelanggan terhadap FoodGo.
-
-**Solusi desain awal:**
-
-FoodGo dapat menerapkan retry terbatas dengan exponential backoff, yaitu mencoba ulang permintaan dengan jeda yang semakin panjang, misalnya 1, 2, lalu 4 detik, dan berhenti setelah beberapa kali percobaan. Untuk transaksi pembayaran, sistem perlu menggunakan *idempotency key*: setiap pembayaran diberi ID unik, sehingga jika permintaan dengan ID yang sama dikirim ulang, server cukup mengembalikan hasil sebelumnya tanpa memotong saldo lagi. Circuit breaker juga dapat digunakan untuk menghentikan sementara permintaan ke service yang terus mengalami kegagalan, maka pelanggan segera mendapat informasi dan service yang bermasalah tidak semakin terbebani.
-
-**Trade-off:**
-
-Retry dapat membantu mengatasi gangguan sementara, tetapi jika dilakukan terlalu sering, jumlah permintaan justru meningkat ketika server sedang bermasalah. Karena Ini dapat memperparah kegagalan, jumlah retry perlu dibatasi dan jeda antarpercobaan perlu ditingkatkan secara bertahap. Selain itu, penerapan idempotency membuat server harus menyimpan daftar ID transaksi yang sudah diproses, sehingga membutuhkan tambahan penyimpanan dan logika.
 
 ---
 
