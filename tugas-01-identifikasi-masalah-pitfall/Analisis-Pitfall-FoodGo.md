@@ -35,29 +35,6 @@ Retry dapat membantu mengatasi gangguan sementara, tetapi jika dilakukan terlalu
 
 ---
 
-## Pitfall 2: Latency Is Zero — ditulis oleh Gde Andika Ananta Putra
-
-**Bukti di skenario:**
-
-Skenario menyebutkan bahwa modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu. Ketika jumlah pesanan meningkat, aplikasi menjadi sangat lambat dan beberapa permintaan mengalami timeout.
-
-**Kenapa ini keliru:**
-
-Dalam sistem terdistribusi, komunikasi antarservice membutuhkan waktu. Permintaan harus dikirim melalui jaringan, diproses oleh service tujuan, lalu hasilnya dikirim kembali. Waktu respons dapat meningkat ketika server sibuk atau jaringan mengalami gangguan. Jika sistem menganggap komunikasi berlangsung seketika, desainnya tidak mampu menangani keterlambatan yang terjadi dalam kondisi nyata.
-
-**Dampak ke FoodGo:**
-
-Ketika modul pembayaran merespons dengan lambat, proses pada modul pesanan ikut tertahan. Thread atau koneksi yang digunakan untuk menangani permintaan tersebut tetap terpakai selama menunggu. Saat banyak pelanggan melakukan pemesanan secara bersamaan, semakin banyak resource yang tertahan sehingga permintaan baru sulit diproses. Akibatnya, waktu respons meningkat, permintaan mengalami timeout, dan server berisiko kehabisan resource.
-
-**Solusi desain awal:**
-
-FoodGo perlu menetapkan timeout pada setiap pemanggilan antarservice agar proses tidak menunggu tanpa batas. Batas waktu tersebut harus disesuaikan dengan kebutuhan setiap operasi. Selain itu, FoodGo dapat membatasi jumlah permintaan yang diproses secara bersamaan dan memantau waktu respons setiap service. Jika suatu operasi dapat dilakukan secara asinkron, proses tersebut juga dapat dipisahkan agar tidak perlu menunggu seluruh pekerjaan selesai dalam satu permintaan.
-
-**Trade-off:**
-
-Timeout yang terlalu singkat dapat membuat permintaan dihentikan meskipun service tujuan sebenarnya masih dapat menyelesaikannya. Sebaliknya, timeout yang terlalu lama membuat resource tetap terpakai ketika service mengalami masalah. Oleh sebab itu, batas waktu perlu ditentukan berdasarkan hasil pengukuran waktu respons dan kebutuhan proses bisnis.
-
----
 
 ## Pitfall 3: Single Point of Failure pada Arsitektur Monolitik — ditulis oleh Dyandra Alifyan Nugroho
 
