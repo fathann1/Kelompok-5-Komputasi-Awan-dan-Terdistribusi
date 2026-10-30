@@ -1,8 +1,8 @@
 # Jurnal Proses — Tugas 1
 
 ## [Tanggal diskusi 1] — Pembagian tugas
-- Peserta: [nama-nama yang hadir]
-- Media: [tatap muka]
+- Peserta: Gusti Rifan, Gde Andika Ananta Putra, Muhammad Rajwa Al Fathan Koessaputra, Dyandra Alifyan Nugroho.
+- Media: tatap muka
 - Poin diskusi:
   - Membaca studi kasus FoodGo dan menandai gejala utama: aplikasi lambat dan timeout, server crash dan harus di-restart manual, komentar kode `# network is always reliable, no need for retry`, tidak ada timeout antarservice, serta semua modul berjalan dalam satu proses monolitik.
   - Memilih tiga pitfall yang buktinya paling jelas di skenario: *The Network Is Reliable*, *Latency Is Zero*, dan *Single Point of Failure* (arsitektur monolitik).
@@ -12,7 +12,7 @@
 ## [Tanggal diskusi 2] — Penyusunan dan review draf
 
 * Peserta: Gde Andika Ananta Putra, Gusti Rifan, Muhammad Rajwa Al Fathan Koessaputra, Dyandra Alifyan Nugroho.
-* Media: [tatap muka]
+* Media: tatap muka
 * Poin diskusi:
    * Draf ketiga pitfall dan kesimpulan digabungkan ke `Analisis-Pitfall-FoodGo.md`.
    * Pitfall 3 diberi catatan bahwa arsitektur monolitik tidak selalu buruk;
@@ -26,7 +26,7 @@
 
 ## 2026-10-31 — Revisi Pitfall 1
 - Peserta: Gusti Rifan, Gde Andika Ananta Putra, Muhammad Rajwa Al Fathan Koessaputra, Dyandra Alifyan Nugroho.
-- Media: [tatap muka]
+- Media: tatap muka
 - Perubahan:
   - Bukti Pitfall 1 difokuskan ke komentar `no need for retry`; pembahasan timeout dirujuk ke Pitfall 2.
   - Bagian "Kenapa keliru" ditambah contoh penyebab kegagalan jaringan (paket hilang, koneksi putus, crash, *network partition*) dan poin bahwa pengirim tidak dapat mengetahui apakah permintaannya sampai.
