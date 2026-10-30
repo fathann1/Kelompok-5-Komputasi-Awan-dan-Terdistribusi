@@ -2,7 +2,7 @@
 
 ## [Tanggal diskusi 1] — Pembagian tugas
 - Peserta: [nama-nama yang hadir]
-- Media: [Discord / WhatsApp / tatap muka]
+- Media: [tatap muka]
 - Poin diskusi:
   - Membaca studi kasus FoodGo dan menandai gejala utama: aplikasi lambat dan timeout, server crash dan harus di-restart manual, komentar kode `# network is always reliable, no need for retry`, tidak ada timeout antarservice, serta semua modul berjalan dalam satu proses monolitik.
   - Memilih tiga pitfall yang buktinya paling jelas di skenario: *The Network Is Reliable*, *Latency Is Zero*, dan *Single Point of Failure* (arsitektur monolitik).
@@ -10,7 +10,7 @@
 - Perbedaan pendapat: [isi jika ada, mis. apakah masalah "tidak ada timeout" masuk Pitfall 1 atau Pitfall 2]
 
 ## [Tanggal diskusi 2] — Penyusunan dan review draf
-- Peserta: [...]
+- Peserta: [Gde Andika Ananta Putra]
 - Poin diskusi:
   - Draf ketiga pitfall dan kesimpulan digabungkan ke `Analisis-Pitfall-FoodGo.md`.
   - Pitfall 3 diberi catatan bahwa arsitektur monolitik tidak selalu buruk; masalah utamanya adalah ketergantungan pada satu proses tanpa isolasi kegagalan.
