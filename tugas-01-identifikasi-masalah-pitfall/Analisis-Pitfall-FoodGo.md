@@ -34,6 +34,7 @@ FoodGo dapat menerapkan retry terbatas dengan exponential backoff, yaitu mencoba
 Retry dapat membantu mengatasi gangguan sementara, tetapi jika dilakukan terlalu sering, jumlah permintaan justru meningkat ketika server sedang bermasalah. Karena Ini dapat memperparah kegagalan, jumlah retry perlu dibatasi dan jeda antarpercobaan perlu ditingkatkan secara bertahap. Selain itu, penerapan idempotency membuat server harus menyimpan daftar ID transaksi yang sudah diproses, sehingga membutuhkan tambahan penyimpanan dan logika.
 
 ---
+
 ## Pitfall 2: Latency Is Zero — ditulis oleh Gde Andika Ananta Putra
 
 **Bukti di skenario:**
