@@ -17,10 +17,10 @@ Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan t
  
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| Gusti Rifan | 103072400150 | [isi] |
-| Gde Andika Ananta Putra | 103072400161 | [isi] |
-| Dyandra Alifyan Nugroho | 103072400014 | [isi] |
-| Muhammad Rajwa Al Fathan Koessaputra | 103072400113 | [isi] |
+| Gusti Rifan | 103072400150 | Pemilihan dan analisis arsitektur SOA + Publish-Subscribe |
+| Gde Andika Ananta Putra | 103072400161 | Komponen dan diagram arsitektur |
+| Dyandra Alifyan Nugroho | 103072400014 | Skenario end-to-end dan alur komunikasi |
+| Muhammad Rajwa Al Fathan Koessaputra | 103072400113 | Analisis coupling, trade-off, dan kesimpulan |
  
 ---
  
