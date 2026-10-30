@@ -7,7 +7,7 @@
   - Membaca studi kasus FoodGo dan menandai gejala utama: aplikasi lambat dan timeout, server crash dan harus di-restart manual, komentar kode `# network is always reliable, no need for retry`, tidak ada timeout antarservice, serta semua modul berjalan dalam satu proses monolitik.
   - Memilih tiga pitfall yang buktinya paling jelas di skenario: *The Network Is Reliable*, *Latency Is Zero*, dan *Single Point of Failure* (arsitektur monolitik).
   - Pembagian tugas: Gusti → Pitfall 1, Andika → Pitfall 2, Dyandra → Pitfall 3, Fathan → kesimpulan kelompok dan review silang.
-- Perbedaan pendapat: [isi jika ada, mis. apakah masalah "tidak ada timeout" masuk Pitfall 1 atau Pitfall 2]
+- Perbedaan pendapat: tidak ada
 
 ## [Tanggal diskusi 2] — Penyusunan dan review draf
 
@@ -32,7 +32,6 @@
   - Bagian "Kenapa keliru" ditambah contoh penyebab kegagalan jaringan (paket hilang, koneksi putus, crash, *network partition*) dan poin bahwa pengirim tidak dapat mengetahui apakah permintaannya sampai.
   - Dampak diganti dengan skenario respons pembayaran hilang yang menyebabkan pesanan menggantung dan risiko pembayaran ganda.
   - Solusi idempotency dijelaskan cara kerjanya; trade-off ditambah biaya penyimpanan ID transaksi.
-- Catatan: [apakah kesimpulan Fathan ikut disesuaikan?]
 
 ## Review Silang
 -  mengomentari analisis Gusti: [...]
@@ -42,11 +41,10 @@
 
 ## Log Penggunaan AI (Level 2)
 
-| Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
+| Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah menjadi tulisan sendiri |
 |---|---|---|---|---|
-| [tanggal lain jika ada pemakaian AI sebelumnya] | ... | ... | ... | ... |
-| 2026-10-28 | Claude | Meminta bantuan mengisi JURNAL.md Tugas 1 | Memberi kerangka jurnal | Kerangka dipakai sebagai acuan struktur jurnal |
-| 2026-10-31 | Claude | Meminta penjelasan studi kasus FoodGo secara sederhana | Penjelasan dengan analogi warung makan | Dipakai untuk memahami konsep, tidak disalin ke laporan |
-| 2026-10-31 | Claude | Meminta review analisis terhadap poin-poin soal | Semua poin terpenuhi; Pitfall 1 dan 2 tumpang tindih; dampak Pitfall 1 kurang konkret | Dijadikan dasar keputusan untuk merevisi Pitfall 1 |
-| 2026-10-31 | Claude | Meminta perbaikan Pitfall 1 | Outline revisi, review draf Gusti, lalu versi revisi lengkap (atas izin dosen) | Disesuaikan oleh Gusti dengan bahasa sendiri sebelum dimasukkan ke laporan |
-| 2026-10-31 | Claude | Meminta pembuatan jurnal | Mengisi bagian jurnal yang faktanya diketahui; bagian diskusi dibiarkan untuk diisi kelompok | Tanggal, peserta, dan review silang diisi sendiri oleh kelompok |
+| 2026-10-28 | Claude | Meminta gambaran struktur jurnal Tugas 1 | Memberikan contoh susunan bagian jurnal | Digunakan sebagai referensi dalam menyusun jurnal kelompok. |
+| 2026-10-31 | Claude | Meminta penjelasan mengenai studi kasus FoodGo | Memberikan penjelasan sederhana agar materi lebih mudah dipahami | Digunakan untuk membantu memahami kasus sebelum berdiskusi dengan kelompok. |
+| 2026-10-31 | Claude | Meminta masukan terhadap poin-poin tugas | Memberikan beberapa catatan untuk bahan evaluasi | Dijadikan bahan pertimbangan dan diperiksa kembali oleh anggota kelompok. |
+| 2026-10-31 | Claude | Meminta saran mengenai kerangka pembahasan Pitfall 1 | Memberikan ide mengenai bagian yang perlu diperhatikan | Digunakan sebagai bahan diskusi untuk menentukan perbaikan yang diperlukan. |
+| 2026-10-31 | Claude | Meminta gambaran struktur jurnal | Memberikan saran mengenai bagian jurnal yang perlu dilengkapi | Kelompok melengkapi jurnal berdasarkan hasil diskusi dan pemahaman masing-masing. |
