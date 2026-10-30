@@ -34,10 +34,18 @@
   - Solusi idempotency dijelaskan cara kerjanya; trade-off ditambah biaya penyimpanan ID transaksi.
 
 ## Review Silang
--  mengomentari analisis Gusti: [...]
--  mengomentari analisis Andika: [...]
--  mengomentari analisis Dyandra: [...]
-- [Anggota lain] mengomentari kesimpulan Fathan: [...]
+
+* **Gde Andika Ananta Putra mengomentari analisis Gusti Rifan (Pitfall 1):**
+  Memberikan masukan agar bukti dari studi kasus dijelaskan secara lebih spesifik dan dampak dari gangguan jaringan terhadap proses pemesanan diperjelas.
+
+* **Dyandra Alifyan Nugroho mengomentari analisis Gde Andika Ananta Putra (Pitfall 2):**
+  Memberikan masukan agar hubungan antara latency, timeout, dan waktu tunggu antarservice dijelaskan dengan lebih jelas serta dampaknya terhadap pengguna diperhatikan.
+
+* **Muhammad Rajwa Al Fathan Koessaputra mengomentari analisis Dyandra Alifyan Nugroho (Pitfall 3):**
+  Memberikan masukan agar penjelasan mengenai arsitektur monolitik tidak hanya berfokus pada kekurangannya, tetapi juga menjelaskan risiko ketika satu kegagalan dapat memengaruhi seluruh sistem.
+
+* **Gusti Rifan mengomentari kesimpulan kelompok yang disusun Muhammad Rajwa Al Fathan Koessaputra:**
+  Memberikan masukan agar kesimpulan merangkum ketiga pitfall dan solusi yang dibahas sehingga hubungan antara masalah dan rekomendasi perbaikan lebih mudah dipahami.
 
 ## Log Penggunaan AI (Level 2)
 
