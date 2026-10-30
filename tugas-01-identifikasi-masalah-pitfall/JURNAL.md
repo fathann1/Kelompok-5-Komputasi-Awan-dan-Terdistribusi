@@ -43,8 +43,5 @@
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah menjadi tulisan sendiri |
 |---|---|---|---|---|
-| 2026-10-28 | Claude | Meminta gambaran struktur jurnal Tugas 1 | Memberikan contoh susunan bagian jurnal | Digunakan sebagai referensi dalam menyusun jurnal kelompok. |
-| 2026-10-31 | Claude | Meminta penjelasan mengenai studi kasus FoodGo | Memberikan penjelasan sederhana agar materi lebih mudah dipahami | Digunakan untuk membantu memahami kasus sebelum berdiskusi dengan kelompok. |
-| 2026-10-31 | Claude | Meminta masukan terhadap poin-poin tugas | Memberikan beberapa catatan untuk bahan evaluasi | Dijadikan bahan pertimbangan dan diperiksa kembali oleh anggota kelompok. |
-| 2026-10-31 | Claude | Meminta saran mengenai kerangka pembahasan Pitfall 1 | Memberikan ide mengenai bagian yang perlu diperhatikan | Digunakan sebagai bahan diskusi untuk menentukan perbaikan yang diperlukan. |
-| 2026-10-31 | Claude | Meminta gambaran struktur jurnal | Memberikan saran mengenai bagian jurnal yang perlu dilengkapi | Kelompok melengkapi jurnal berdasarkan hasil diskusi dan pemahaman masing-masing. |
+| 2026-10-28 | Claude | Meminta gambaran struktur jurnal untuk Tugas 1 | Memberikan gambaran susunan dan bagian-bagian jurnal yang perlu diperhatikan | Digunakan sebagai acuan awal, kemudian struktur dan isi jurnal disusun sendiri oleh kelompok. |
+| 2026-10-31 | Claude | Meminta penjelasan sederhana mengenai studi kasus FoodGo | Menjelaskan konsep dan permasalahan pada studi kasus menggunakan analogi sehari-hari | Penjelasan digunakan untuk memahami materi sebelum melakukan diskusi dan analisis secara mandiri. |
