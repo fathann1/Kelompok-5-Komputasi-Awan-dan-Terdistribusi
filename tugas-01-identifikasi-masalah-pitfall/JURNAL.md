@@ -12,6 +12,7 @@
 ## [Tanggal diskusi 2] — Penyusunan dan review draf
 
 * Peserta: Gde Andika Ananta Putra, Gusti Rifan, Muhammad Rajwa Al Fathan Koessaputra, Dyandra Alifyan Nugroho.
+* Media: [tatap muka]
 * Poin diskusi:
    * Draf ketiga pitfall dan kesimpulan digabungkan ke `Analisis-Pitfall-FoodGo.md`.
    * Pitfall 3 diberi catatan bahwa arsitektur monolitik tidak selalu buruk;
@@ -25,7 +26,7 @@
 
 ## 2026-10-31 — Revisi Pitfall 1
 - Peserta: Gusti Rifan, Gde Andika Ananta Putra, Muhammad Rajwa Al Fathan Koessaputra, Dyandra Alifyan Nugroho.
-- Masalah yang ditemukan: Pitfall 1 dan Pitfall 2 tumpang tindih karena memakai bukti dan solusi yang sama (tidak ada timeout), dan dampak Pitfall 1 masih umum.
+- Media: [tatap muka]
 - Perubahan:
   - Bukti Pitfall 1 difokuskan ke komentar `no need for retry`; pembahasan timeout dirujuk ke Pitfall 2.
   - Bagian "Kenapa keliru" ditambah contoh penyebab kegagalan jaringan (paket hilang, koneksi putus, crash, *network partition*) dan poin bahwa pengirim tidak dapat mengetahui apakah permintaannya sampai.
