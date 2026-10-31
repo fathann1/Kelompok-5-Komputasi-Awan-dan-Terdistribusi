@@ -38,21 +38,18 @@ jika memakai Pub-Sub saja (semua event) maka Langkah yang butuh jawaban pasti sa
  
 ---
  
-## 2. Komponen
+## 2. Komponen dan Diagram Arsitektur
  
-
-**API Gateway**  Satu pintu masuk untuk aplikasi pelanggan, resto, dan kurir. Meneruskan request ke service yang tepat, menangani autentikasi, rate limiting, dan timeout. | — |
-**Service Katalog Resto** | Menyediakan daftar resto dan menu, serta menerima dan meneruskan pesanan masuk ke aplikasi resto. | DB Katalog (resto, menu, harga, stok) |
-**Service Pesanan** | Membuat pesanan, menyimpan status pesanan, dan menjadi pusat alur pemesanan. | DB Pesanan |
-**Service Pembayaran** | Memproses pembayaran dengan *idempotency key* agar tidak terjadi pembayaran ganda (Tugas 1, Pitfall 1). | DB Pembayaran |
-**Service Kurir / Notifikasi** | Mencari dan menugaskan kurir terdekat, lalu mengirim notifikasi ke pelanggan dan kurir. | DB Kurir (lokasi, status kurir) |
-**Message Broker** (mis. RabbitMQ) | Menyimpan dan menyalurkan event ke semua subscriber. Event tetap tersimpan di antrean jika subscriber sedang mati. | Antrean event |
+**API Gateway** : Satu pintu masuk untuk aplikasi pelanggan, resto, dan kurir. Meneruskan request ke service yang tepat, menangani autentikasi, rate limiting, dan timeout.
+**Service Katalog Resto** : Menyediakan daftar resto dan menu, serta menerima dan meneruskan pesanan masuk ke aplikasi resto. Memiliki DB Katalog (resto, menu, harga, stok)
+**Service Pesanan** : Membuat pesanan, menyimpan status pesanan, dan menjadi pusat alur pemesanan. Memiliki DB Pesanan
+**Service Pembayaran** : Memproses pembayaran dengan *idempotency key* agar tidak terjadi pembayaran ganda dan Memiliki DB Pembayaran
+**Service Kurir / Notifikasi** : Mencari dan menugaskan kurir terdekat, lalu mengirim notifikasi ke pelanggan dan kurir. DB Kurir (lokasi, status kurir) 
+**Message Broker** : Menyimpan dan menyalurkan event ke semua subscriber. Event tetap tersimpan di antrean jika subscriber sedang mati. Data yang dimiliki antrean event 
  
-Setiap service punya database sendiri. Dengan begitu perubahan skema atau gangguan pada satu database tidak merusak service lain.
+Setiap service punya database sendiri agar perubahan skema atau gangguan pada satu database tidak merusak service lain.
  
 ---
- 
-## 2. Diagram Arsitektur
  
 ```mermaid
 graph LR
@@ -103,11 +100,9 @@ graph LR
  
 ---
  
-## 4. Skenario End-to-End: Pelanggan Memesan Makanan
+## 3. Skenario End-to-End: Pelanggan Memesan Makanan
  
 Skenario: pelanggan membuat pesanan → membayar → resto menerima notifikasi → kurir ditugaskan → pelanggan menerima info kurir.
- 
-Keterangan panah: **panah tegas berujung segitiga** = request sinkron; **putus-putus berujung segitiga** = balasan dari request sinkron; **putus-putus berujung terbuka (→)** = event asinkron (pengirim tidak menunggu).
  
 ```mermaid
 sequenceDiagram
@@ -161,7 +156,7 @@ Pelanggan sudah mendapat konfirmasi di langkah 8. Langkah 9 dan seterusnya berja
  
 ---
  
-## 5. Analisis: Bagaimana Arsitektur Ini Mengatasi Masalah Coupling
+## 4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1.
  
 1. **Deploy bisa dilakukan per service.** Tim kurir bisa memperbarui Service Kurir tanpa me-restart Pesanan atau Pembayaran. Selama Service Kurir mati, event `PesananDibayar` dan `PesananSiap` tetap tersimpan di broker dan diproses setelah service kembali hidup. Pesanan baru tetap bisa dibuat.
 2. **Pengirim event tidak perlu mengenal penerimanya.** Service Pesanan cukup mem-publish `PesananDibayar`. Jika suatu saat FoodGo menambah service baru, misalnya Service Poin Loyalitas, service itu cukup subscribe ke event yang sama tanpa mengubah kode Service Pesanan.
@@ -170,16 +165,16 @@ Pelanggan sudah mendapat konfirmasi di langkah 8. Langkah 9 dan seterusnya berja
 5. **Solusi Tugas 1 punya tempat yang jelas.** Timeout dan circuit breaker dipasang di API Gateway dan di panggilan sinkron Pesanan → Pembayaran. Retry dengan backoff dan idempotency key dipakai di Service Pembayaran. Proses yang tidak perlu ditunggu dipindah ke jalur asinkron.
 ---
  
-## 6. Trade-off
+## Trade-off
  
 Arsitektur ini tidak gratis. Kekurangan dan kompleksitas baru yang muncul:
  
 | Trade-off | Penjelasan | Cara mengurangi |
 |---|---|---|
 | **Debugging lebih sulit** | Alur pesanan tersebar di beberapa service dan event asinkron. Jika kurir tidak pernah ditugaskan, sulit melacak di mana event hilang atau gagal diproses. | Setiap pesanan membawa *correlation ID* yang dicatat di log semua service, ditambah logging terpusat. |
-| **Data tidak langsung konsisten (*eventual consistency*)** | Karena event asinkron, ada jeda saat status pesanan di Service Pesanan belum tahu kurir sudah ditugaskan. Pelanggan bisa sebentar melihat status lama. | Tampilkan status sebagai "sedang diproses" dan perbarui saat event masuk. |
-| **Broker menjadi titik kegagalan baru** | Jika message broker mati, semua komunikasi asinkron berhenti. Ini *single point of failure* baru, mirip masalah Tugas 1. | Broker dijalankan dalam cluster (beberapa node) dan pesan disimpan persisten di disk. |
+| **Data tidak langsung konsisten** | Karena event asinkron, ada jeda saat status pesanan di Service Pesanan belum tahu kurir sudah ditugaskan. Pelanggan bisa sebentar melihat status lama. | Tampilkan status sebagai "sedang diproses" dan perbarui saat event masuk. |
+| **Broker menjadi titik kegagalan baru** | Jika message broker mati, semua komunikasi asinkron berhenti. Ini *single point of failure* baru. | Broker dijalankan dalam cluster (beberapa node) dan pesan disimpan persisten di disk. |
 | **Event bisa terkirim dua kali** | Broker umumnya menjamin pesan sampai *setidaknya sekali* (*at-least-once*), sehingga subscriber bisa menerima event yang sama dua kali, misalnya dua kurir ditugaskan untuk satu pesanan. | Subscriber dibuat idempoten: event yang ID-nya sudah pernah diproses diabaikan. |
-| **Panggilan sinkron masih ada** | Pesanan → Pembayaran tetap sinkron, jadi jika Pembayaran lambat, pembuatan pesanan ikut lambat. | Timeout dan circuit breaker (Tugas 1); Pembayaran diberi beberapa instance. |
+| **Panggilan sinkron masih ada** | Pesanan → Pembayaran tetap sinkron, jadi jika Pembayaran lambat, pembuatan pesanan ikut lambat. | Timeout dan circuit breaker; Pembayaran diberi beberapa instance. |
 | **Biaya dan beban operasional naik** | Ada lebih banyak server, database, broker, dan gateway yang harus di-deploy, dipantau, dan dibayar. Tim butuh kemampuan DevOps yang lebih tinggi. | Pemisahan dilakukan bertahap, dimulai dari modul yang paling sering bermasalah (Pembayaran dan Kurir). |
 | **API Gateway juga bisa menjadi bottleneck** | Semua request lewat gateway. | Gateway dijalankan beberapa instance di belakang load balancer. |
