@@ -62,4 +62,4 @@
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| 2026-11-01 | Claude | Meminta gambaran poin-poin yang perlu ada di jurnal Tugas 2 berdasarkan README dan format jurnal Tugas 1 | Memberikan kerangka bagian jurnal dan poin diskusi yang relevan (opsi arsitektur, alasan pemilihan, revisi diagram) | Kerangka dipakai sebagai acuan, lalu isi jurnal ditulis ulang dan dilengkapi kelompok sesuai diskusi yang sebenarnya |
+| 2026-10-31 | Claude | Meminta gambaran poin-poin yang perlu ada di jurnal Tugas 2 berdasarkan README dan format jurnal Tugas 1 | Memberikan kerangka bagian jurnal dan poin diskusi yang relevan (opsi arsitektur, alasan pemilihan, revisi diagram) | Kerangka dipakai sebagai acuan, lalu isi jurnal ditulis ulang dan dilengkapi kelompok sesuai diskusi yang sebenarnya |
