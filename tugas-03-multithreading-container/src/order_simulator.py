@@ -4,11 +4,17 @@ import time
 counter = 0
 lock = threading.Lock()
 jumlah_pesanan = 100
+pakai_lock = False
 
 def worker():
     global counter
-    with lock:
-        nilai = counter 
+    if pakai_lock:
+        with lock:
+            nilai = counter
+            time.sleep(0.001)
+            counter = nilai + 1
+    else:
+        nilai = counter
         time.sleep(0.001)
         counter = nilai + 1
 
@@ -23,4 +29,4 @@ for t in daftar_thread:
 for t in daftar_thread:
     t.join()
 
-print(f"Nilai ujian: {counter}, target: {jumlah_pesanan}")
+print(f"Pakai lock: {pakai_lock} | Pesanan diproses: {counter} dari {jumlah_pesanan}")
