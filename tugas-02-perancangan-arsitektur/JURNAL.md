@@ -31,7 +31,7 @@
   - Menyepakati notasi panah di diagram: garis tegas = request sinkron, putus-putus = balasan atau event asinkron, agar jenis komunikasi terlihat langsung di diagram.
   - Menyusun skenario end-to-end (buat pesanan → bayar → resto menerima notifikasi → kurir ditugaskan) dalam bentuk sequence diagram dan tabel per langkah.
 
-## Revisi Diagram (versi 1 → versi 2
+## Revisi Diagram (versi 1 → versi 2)
 | Versi | Perubahan | Alasan |
 |---|---|---|
 | v1 → v2 | **[tidak ada** | **[karena sudah lengkap dan bagus]** |
