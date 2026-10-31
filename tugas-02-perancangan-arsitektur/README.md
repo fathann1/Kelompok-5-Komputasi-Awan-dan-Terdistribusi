@@ -28,34 +28,31 @@ Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan t
  
 Kami memilih **kombinasi SOA dan Publish-Subscribe**:
  
-- **SOA untuk service inti.** Pesanan, Pembayaran, dan Katalog Resto menjadi service terpisah yang masing-masing punya database sendiri dan diakses lewat API. Komunikasinya **sinkron (request-response)** karena pelanggan butuh jawaban langsung, misalnya "menu apa yang tersedia?" atau "pembayaran berhasil atau tidak?".
-- **Publish-Subscribe untuk kejadian setelah pesanan dibayar.** Pemberitahuan ke resto, penugasan kurir, dan notifikasi ke pelanggan dikirim sebagai **event asinkron** lewat message broker. Pelanggan tidak perlu menunggu kurir ditemukan untuk mendapat konfirmasi bahwa pesanannya diterima.
-**Kenapa kombinasi, bukan salah satu saja?**
- 
-| Opsi | Masalah jika dipakai sendirian |
-|---|---|
-| SOA murni (semua sinkron) | Service Pesanan harus memanggil Resto, Kurir, dan Notifikasi satu per satu lalu menunggu semuanya. Jika Service Kurir sedang di-deploy ulang atau lambat, pembuatan pesanan ikut gagal. Ini mengulang masalah *coupling* dan *latency is zero* dari Tugas 1. |
-| Pub-Sub murni (semua event) | Langkah yang butuh jawaban pasti saat itu juga, seperti cek menu dan proses pembayaran, menjadi rumit. Pelanggan harus menunggu event balasan tanpa tahu kapan datangnya, dan alur pembayaran yang sensitif sulit dilacak. |
-| **SOA + Pub-Sub** | Sinkron hanya dipakai untuk langkah yang memang butuh jawaban langsung. Sisanya asinkron, sehingga tim kurir dan tim resto bisa deploy tanpa mengganggu alur pemesanan. |
+- SOA untuk service inti. Pesanan, Pembayaran, dan Katalog Resto menjadi service terpisah yang masing-masing punya database sendiri dan diakses lewat API. Dengan komunikasi sinkron(request-response) karena pelanggan butuh jawaban langsung, misalnya "menu apa yang tersedia?" atau "pembayaran berhasil atau tidak?".
+- Publish-Subscribe untuk kejadian setelah pesanan dibayar. Pemberitahuan ke resto, penugasan kurir, dan notifikasi ke pelanggan dikirim sebagai event asinkron lewat message broker. Pelanggan tidak perlu menunggu kurir ditemukan untuk mendapat konfirmasi bahwa pesanannya diterima.
+
+alasan memilih SOA dan Pub-Sub karena Sinkron hanya dipakai untuk langkah yang memang butuh jawaban langsung dan Sisanya asinkron, sehingga tim kurir dan tim resto bisa deploy tanpa mengganggu alur pemesanan. 
+jika memakai SOA saja (semua sinkron) maka Service Pesanan harus memanggil Resto, Kurir, dan Notifikasi satu per satu lalu menunggu semuanya. Jika Service Kurir sedang di-deploy ulang atau lambat, pembuatan pesanan ikut gagal.
+jika memakai Pub-Sub saja (semua event) maka Langkah yang butuh jawaban pasti saat itu juga atau realtime, seperti cek menu dan proses pembayaran, menjadi rumit. Pelanggan harus menunggu event balasan tanpa tahu kapan datangnya, dan alur pembayaran yang sensitif sulit dilacak.
+
  
 ---
  
 ## 2. Komponen
  
-| Komponen | Tanggung jawab | Data yang dimiliki |
-|---|---|---|
-| **API Gateway** | Satu pintu masuk untuk aplikasi pelanggan, resto, dan kurir. Meneruskan request ke service yang tepat, menangani autentikasi, rate limiting, dan timeout. | — |
-| **Service Katalog Resto** | Menyediakan daftar resto dan menu, serta menerima dan meneruskan pesanan masuk ke aplikasi resto. | DB Katalog (resto, menu, harga, stok) |
-| **Service Pesanan** | Membuat pesanan, menyimpan status pesanan, dan menjadi pusat alur pemesanan. | DB Pesanan |
-| **Service Pembayaran** | Memproses pembayaran dengan *idempotency key* agar tidak terjadi pembayaran ganda (Tugas 1, Pitfall 1). | DB Pembayaran |
-| **Service Kurir / Notifikasi** | Mencari dan menugaskan kurir terdekat, lalu mengirim notifikasi ke pelanggan dan kurir. | DB Kurir (lokasi, status kurir) |
-| **Message Broker** (mis. RabbitMQ) | Menyimpan dan menyalurkan event ke semua subscriber. Event tetap tersimpan di antrean jika subscriber sedang mati. | Antrean event |
+
+**API Gateway**  Satu pintu masuk untuk aplikasi pelanggan, resto, dan kurir. Meneruskan request ke service yang tepat, menangani autentikasi, rate limiting, dan timeout. | — |
+**Service Katalog Resto** | Menyediakan daftar resto dan menu, serta menerima dan meneruskan pesanan masuk ke aplikasi resto. | DB Katalog (resto, menu, harga, stok) |
+**Service Pesanan** | Membuat pesanan, menyimpan status pesanan, dan menjadi pusat alur pemesanan. | DB Pesanan |
+**Service Pembayaran** | Memproses pembayaran dengan *idempotency key* agar tidak terjadi pembayaran ganda (Tugas 1, Pitfall 1). | DB Pembayaran |
+**Service Kurir / Notifikasi** | Mencari dan menugaskan kurir terdekat, lalu mengirim notifikasi ke pelanggan dan kurir. | DB Kurir (lokasi, status kurir) |
+**Message Broker** (mis. RabbitMQ) | Menyimpan dan menyalurkan event ke semua subscriber. Event tetap tersimpan di antrean jika subscriber sedang mati. | Antrean event |
  
 Setiap service punya database sendiri. Dengan begitu perubahan skema atau gangguan pada satu database tidak merusak service lain.
  
 ---
  
-## 3. Diagram Arsitektur
+## 2. Diagram Arsitektur
  
 ```mermaid
 graph LR
